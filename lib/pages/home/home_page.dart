@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/components/dialog_add_to_do_item.dart';
+import 'package:todo_app/data/database.dart';
 
 import '../../components/to_do_list_item.dart';
 
@@ -12,15 +13,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _addTaskController = TextEditingController();
+  ToDoDatabase db = ToDoDatabase();
 
-  List toDoList = [
-    ["Complete app", false],
-    ["Do exercise", false],
-  ];
+  @override
+  void initState() {
+    db.initData();
+    super.initState();
+  }
+
 
   void checkboxChanged(int index, bool? value) {
     setState(() {
-      toDoList[index][1] = !toDoList[index][1];
+      db.toDoList[index][1] = !db.toDoList.toList()[index][1];
+      db.updateToDoList();
     });
   }
 
@@ -42,7 +47,8 @@ class _HomePageState extends State<HomePage> {
 
   void saveNewTask() {
     setState(() {
-      toDoList.add([_addTaskController.text, false]);
+      db.toDoList.add([_addTaskController.text, false]);
+      db.updateToDoList();
       _addTaskController.clear();
     });
     Navigator.of(context).pop();
@@ -50,7 +56,8 @@ class _HomePageState extends State<HomePage> {
 
   void deleteTask(int index) {
     setState(() {
-      toDoList.removeAt(index);
+      db.toDoList.removeAt(index);
+      db.updateToDoList();
     });
   }
 
@@ -66,11 +73,11 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: ListView.builder(
-        itemCount: toDoList.length,
+        itemCount: db.toDoList.length,
         itemBuilder: (context, index) {
           return ToDoListItem(
-            name: toDoList[index][0],
-            completed: toDoList[index][1],
+            name: db.toDoList[index][0],
+            completed: db.toDoList[index][1],
             onCompletedChanged: (value) => checkboxChanged(index, value),
             onDelete: (context) => deleteTask(index),
           );
