@@ -1,6 +1,6 @@
 # todo_app
 
-A todo app based on youtube tutorial
+A todo app using a hive database.
 
 ## Getting Started
 
